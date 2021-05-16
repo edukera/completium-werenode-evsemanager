@@ -30,7 +30,7 @@ public class SignedOperation {
         Console.WriteLine("signature length: {0}", signed.Length); */
         return pubkey.Verify(Hex.Parse("03" + data),Hex.Parse(signature));
     }
-    public string GetSignature () { 
+    public string GetSignature () {
         var bytes = Hex.Parse(signature);
         return (new Signature(bytes,sigprefix)).ToString();
     }
@@ -64,7 +64,7 @@ public class SignedOperation {
             new {
                 protocol = Env.Protocol,
                 @branch = branch,
-                contents = new List<object> { 
+                contents = new List<object> {
                     new  {
                         kind          = "transaction",
                         source        = operations[0].contents[0].source.ToString(),
@@ -77,7 +77,7 @@ public class SignedOperation {
                         parameters    = new {
                             @entrypoint = entrypoint,
                             value       = GetParameters(operations)
-                        } 
+                        }
                     }
                 },
                 signature = GetSignature(),
@@ -129,7 +129,7 @@ public class Forger {
           new TransactionContent {
             Source = key.PubKey.Address,
             Counter = ++counter,
-            Amount = 0, 
+            Amount = 0,
             Destination = destination,
             GasLimit = Env.GasLimit,
             StorageLimit = Env.StorageLimit,
@@ -182,7 +182,7 @@ public class ApproveOperation {
         signedOperation = forger.exec().Result;
         ExtractParameters();
         return signedOperation.signed_operation;
-    } 
+    }
 
     private void ExtractParameters () {
         string unforged = signedOperation.GetUnForged();
@@ -202,9 +202,9 @@ public class ApproveOperation {
     }
     public bool IsValid() {
         Console.WriteLine("Env pubkey addr: {0}",Env.PrivateKey.PubKey.Address);
-        return 
+        return
             Entrypoint  == "approve" &&
-            Destination == Env.Token && 
+            Destination == Env.Token &&
             Spender     == Env.PrivateKey.PubKey.Address;
     }
 
@@ -216,7 +216,7 @@ public class ApproveOperation {
                 prim = "Pair",
                 args = new List<object>() {
                     new { @string = Spender },
-                    new { @int = (Value).ToString() } 
+                    new { @int = (Value).ToString() }
                 }
             };
         });

@@ -13,7 +13,7 @@ public class Transfer {
             new TransactionContent {
                Source = Env.PrivateKey.PubKey.Address,
                Counter = ++counter,
-               Amount = 0, 
+               Amount = 0,
                Destination = Env.Token,
                GasLimit = Env.GasLimit,
                StorageLimit = Env.StorageLimit,
@@ -44,7 +44,7 @@ public class Transfer {
         // inject the operation and get its id (operation hash)
         var trOpHash = await Env.Tezos.Inject.Operation.PostAsync(bytes.Concat(signature));
         Console.WriteLine(trOpHash.ToString());
-        // Update Indexer 
+        // Update Indexer
         Indexer.TransferOps.Add(trOpHash.ToString(), new Indexer.Transfer(value));
         session.transferHash = trOpHash.ToString();
     }

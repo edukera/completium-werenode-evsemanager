@@ -6,12 +6,12 @@ using System.Threading;
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
 public class Session {
 
-    public enum ApproveState { TobeApproved, Approved, NotApplied, InvalidAmount, InvalidSpender, TimeElapsed } 
+    public enum ApproveState { TobeApproved, Approved, NotApplied, InvalidAmount, InvalidSpender, TimeElapsed }
     public enum ChargingState { TobeSet, Off, On, FailedOn, FailedOff }
     public enum SessionState { Created, Charging, Failed, Success }
     public string id { get; set; }
     public DateTime creationDate { get; set; }
-    public string approveHash { get; set; } 
+    public string approveHash { get; set; }
     public string transferHash { get; set; }
     public ApproveState approveState { get; set; } = ApproveState.TobeApproved;
     public ChargingState chargeState { get; set; } = ChargingState.TobeSet;
@@ -47,7 +47,7 @@ public class Session {
         return sessionState == SessionState.Created || sessionState == SessionState.Charging;
     }
     public bool IsInvalidApprove () {
-        return 
+        return
             approveState == ApproveState.InvalidAmount  ||
             approveState == ApproveState.InvalidSpender ||
             approveState == ApproveState.NotApplied     ||
@@ -63,7 +63,7 @@ public class SessionProcess {
 
     public static Dictionary<string,Session> Sessions = new Dictionary<string, Session>();
 
-    private void switchEvseOff (Session session) {
+    private void SwitchEvseOff (Session session) {
         // TODO : implement real process
         EvseSwitch.ISwitch evse;
         if (EvseSwitch.Switches.TryGetValue(session.evseid,out evse)) {
@@ -78,7 +78,7 @@ public class SessionProcess {
         Session session;
         if (Sessions.TryGetValue(SessionId,out session)) {
 
-            // start switch validation thread 
+            // start switch validation thread
             ThreadPool.QueueUserWorkItem(o => {
                 EvseSwitch.ISwitch evse;
                 if (EvseSwitch.Switches.TryGetValue(session.evseid, out evse)) {
@@ -112,7 +112,7 @@ public class SessionProcess {
                             };
                         } else {
                             session.approveState = Session.ApproveState.NotApplied;
-                            // TODO: should cancel approve 
+                            // TODO: should cancel approve
                         }
                     }
                     if (checkcount++ > 60) {
@@ -125,14 +125,14 @@ public class SessionProcess {
 
             bool @continue = true;
             while (@continue) {
-                // compute continue 
+                // compute continue
                 if (session.userInterrupted || session.switchInterrupted) {
                     if (session.chargeState == Session.ChargingState.On) {
                         // Switch evse OFF
-                        switchEvseOff(session);
+                        SwitchEvseOff(session);
                         session.chargeState = Session.ChargingState.Off;
                         // compute amount to transfer
-                        ThreadPool.QueueUserWorkItem(o => { 
+                        ThreadPool.QueueUserWorkItem(o => {
                             double duration = (DateTime.Now - session.startChargingDate).TotalSeconds;
                             double ratio = duration / session.duration;
                             long approveAmount = Convert.ToInt64(session.amount);
@@ -151,7 +151,7 @@ public class SessionProcess {
                 } else if (session.IsInvalidApprove()) {
                     if (session.chargeState == Session.ChargingState.On) {
                         // Switch evse OFF
-                        switchEvseOff(session);
+                        SwitchEvseOff(session);
                         session.chargeState = Session.ChargingState.Off;
                     }
                     session.sessionState = Session.SessionState.Failed;
@@ -165,7 +165,7 @@ public class SessionProcess {
                     if (duration >= session.duration) {
                         @continue = false;
                         // Switch evse OFF
-                        switchEvseOff(session);
+                        SwitchEvseOff(session);
                         session.chargeState = Session.ChargingState.Off;
                         session.sessionState = Session.SessionState.Success;
                         // Originate transfer transaction

@@ -23,7 +23,7 @@ public class EvseSwitch {
         public string id;
 
         public bool isPlugOn = false;
-        
+
         public SwitchResponse SwitchOn () {
             if (isPlugOn) {
                 return new SwitchResponse () {
@@ -77,7 +77,7 @@ public class EvseSwitch {
                     status = SwitchStatus.SwtichFAIL
                 };
             }
-        }  
+        }
         public SwitchResponse SwitchOn() { return get(url + on); }
         public SwitchResponse SwitchOff() { return get(url + off); }
         public bool IsOn () { return true; }
@@ -105,10 +105,10 @@ public class EvseSwitch {
                     status = SwitchStatus.SwtichFAIL
                 };
             }
-        }  
+        }
 
         private string GetUrlPrefix () { return url + ":" + port + "/set.cmd?user=" + user + "+pass=" + pwd + "+cmd="; }
-        public SwitchResponse SwitchOn() { 
+        public SwitchResponse SwitchOn() {
             if (IsOn()) {
                 return new SwitchResponse() {
                     msg ="Evse already on",
@@ -137,7 +137,7 @@ public class EvseSwitch {
                 return false;
             }
         }
-        
+
     }
 
     public static Dictionary<string,ISwitch> Switches = new Dictionary<string, ISwitch>() {
@@ -146,5 +146,5 @@ public class EvseSwitch {
         { "EVSE000002", new IPPower9255Pro() { url = "http://82.65.82.158", port="40281", user="admin", pwd="12345678" } },
         { "EVSE000004", new SimpleHttpPlug() { url = "http://3.250.1.82/bulb_", on ="on", off="off" } },
     };
-    
+
 }

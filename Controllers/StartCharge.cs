@@ -105,13 +105,13 @@ namespace EvseManager
                 // Forge apply operation
                 signed_operation = approve.forge(nb_tokens, user_privatekey);
             }
-            SignedOperation.PreApplyResponse response = approve.PreApply();
-            if (!(response.IsValid())) {
-                return new StartReply {
-                    Message = response.GetMsg(),
-                    Status = "6"
-                };
-            };
+            // SignedOperation.PreApplyResponse response = approve.PreApply();
+            // if (!(response.IsValid())) {
+            //     return new StartReply {
+            //         Message = response.GetMsg(),
+            //         Status = "6"
+            //     };
+            // };
             if (!(checkPricing(approve.GetValue(), parking_time, currency, evse_id))) {
                 return new StartReply {
                     Message = "Invalid price",
@@ -136,7 +136,7 @@ namespace EvseManager
                     Message = "Could not inject approve operation: " + e.ToString(),
                     Status  = "9"
                 };
-            } 
+            }
             // Create session
             string sessionId = getNextSessionId();
             SessionProcess.Sessions.Add(sessionId, new Session () {

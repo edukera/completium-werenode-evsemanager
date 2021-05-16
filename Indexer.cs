@@ -7,7 +7,7 @@ public class Indexer {
 
     public class Evse {
         public string Id { get; }
-        public string Address { get; }   
+        public string Address { get; }
         public string Manager { get; }
         public string Owner { get; }
         // TODO : add technical & pricing fields from smart contract at Address
@@ -32,11 +32,11 @@ public class Indexer {
 
     private static async void indexEvses () {
         var storage = await Env.Tezos.Blocks.Head.Context.Contracts[Env.AddressBook].Storage.GetAsync();
-        foreach(dynamic evsedata in storage.args[1].args[1].args[0]) {
+        foreach(dynamic evsedata in storage.args[2]) {
             var id      = evsedata.args[0]["string"].ToString();
             var address = evsedata.args[1].args[0]["string"].ToString();
-            var manager = evsedata.args[1].args[1].args[0]["string"].ToString();
-            var owner   = evsedata.args[1].args[1].args[1]["string"].ToString();
+            var manager = evsedata.args[1].args[1]["string"].ToString();
+            var owner   = evsedata.args[1].args[2]["string"].ToString();
             Evse evse = new Evse(id,address,manager,owner);
             Evses.Add(id,evse);
             Console.WriteLine(evse);
@@ -122,7 +122,7 @@ public class Indexer {
                     }
                     // TODO : scan Address Book add & remove of evse to update Evses
                 }
-            } 
+            }
         }
     }
 
@@ -143,5 +143,5 @@ public class Indexer {
             }
             Thread.Sleep(5000);
         }
-    } 
+    }
 }
