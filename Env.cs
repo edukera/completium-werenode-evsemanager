@@ -12,4 +12,5 @@ public class Env {
     public static readonly int Fee = 50000; // TODO: a bit too high?
     public static readonly int GasLimit = 400000;
     public static readonly int StorageLimit = 400;
+    public static readonly int Timeout = 120;
 }

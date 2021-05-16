@@ -46,6 +46,11 @@ public class Session {
     public bool IsActive() {
         return sessionState == SessionState.Created || sessionState == SessionState.Charging;
     }
+
+    public bool IsValidApprove () {
+        return approveState == ApproveState.Approved;
+    }
+
     public bool IsInvalidApprove () {
         return
             approveState == ApproveState.InvalidAmount  ||
@@ -115,7 +120,7 @@ public class SessionProcess {
                             // TODO: should cancel approve
                         }
                     }
-                    if (checkcount++ > 60) {
+                    if (checkcount++ > Env.Timeout) {
                         @continue = false;
                         session.approveState = Session.ApproveState.TimeElapsed;
                     }
@@ -171,10 +176,19 @@ public class SessionProcess {
                         // Originate transfer transaction
                         ThreadPool.QueueUserWorkItem(o => {
                             Indexer.Evse evse;
-                            if (Indexer.Evses.TryGetValue(session.evseid, out evse)) {
-                                Transfer.exec(session, session.userAddress, evse.Owner, Convert.ToInt64(session.amount));
-                            } else {
-                                Console.WriteLine("ANOMALY! evse not found");
+                            bool continue_wait_approve = true;
+                            while (continue_wait_approve) {
+                              if (session.IsValidApprove()) {
+                                continue_wait_approve = false;
+                                if (Indexer.Evses.TryGetValue(session.evseid, out evse)) {
+                                    Transfer.exec(session, session.userAddress, evse.Owner, Convert.ToInt64(session.amount));
+                                } else {
+                                    Console.WriteLine("ANOMALY! evse not found");
+                                }
+                              } else if (session.IsInvalidApprove()) {
+                                continue_wait_approve = false;
+                              }
+                              Thread.Sleep(1000);
                             }
                         });
                     }

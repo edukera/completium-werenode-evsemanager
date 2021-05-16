@@ -42,6 +42,7 @@ public class Transfer {
         byte[] signature = Env.PrivateKey.SignOperation(bytes);
 
         // inject the operation and get its id (operation hash)
+        Console.WriteLine("Injecting transfer operation ...");
         var trOpHash = await Env.Tezos.Inject.Operation.PostAsync(bytes.Concat(signature));
         Console.WriteLine(trOpHash.ToString());
         // Update Indexer
