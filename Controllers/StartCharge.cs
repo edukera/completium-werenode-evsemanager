@@ -105,13 +105,13 @@ namespace EvseManager
                 // Forge apply operation
                 signed_operation = approve.forge(nb_tokens, user_privatekey);
             }
-            // SignedOperation.PreApplyResponse response = approve.PreApply();
-            // if (!(response.IsValid())) {
-            //     return new StartReply {
-            //         Message = response.GetMsg(),
-            //         Status = "6"
-            //     };
-            // };
+            SignedOperation.PreApplyResponse response = approve.PreApply();
+            if (!(response.IsValid())) {
+                return new StartReply {
+                    Message = response.GetMsg(),
+                    Status = "6"
+                };
+            };
             if (!(checkPricing(approve.GetValue(), parking_time, currency, evse_id))) {
                 return new StartReply {
                     Message = "Invalid price",

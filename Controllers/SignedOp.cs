@@ -10,7 +10,6 @@ using System.Linq;
 
 
 public class SignedOperation {
-    private int datalength = 296;
     private byte[] sigprefix = new byte[] { 9 , 245, 205, 134, 18 };
     private string branch;
     private string data;
@@ -19,6 +18,7 @@ public class SignedOperation {
     public string signed_operation;
     public SignedOperation (string b, string so) {
         branch = b;
+        var datalength = so.Length - 128;
         data   = so.Substring(0,datalength);
         signature = so.Substring(datalength);
         signed_operation = so;
