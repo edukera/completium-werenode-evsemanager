@@ -145,7 +145,7 @@ public class SessionProcess {
                             amount = Math.Min(amount, approveAmount);
                             Indexer.Evse evse;
                             if (Indexer.Evses.TryGetValue(session.evseid, out evse)) {
-                                Transfer.exec(session, session.userAddress, evse.Owner, amount);
+                                ManagerAccount.Add(session, session.userAddress, evse.Owner, amount);
                             } else {
                                 Console.WriteLine("ANOMALY! evse not found");
                             }
@@ -181,7 +181,7 @@ public class SessionProcess {
                               if (session.IsValidApprove()) {
                                 continue_wait_approve = false;
                                 if (Indexer.Evses.TryGetValue(session.evseid, out evse)) {
-                                    Transfer.exec(session, session.userAddress, evse.Owner, Convert.ToInt64(session.amount));
+                                    ManagerAccount.Add(session, session.userAddress, evse.Owner, Convert.ToInt64(session.amount));
                                 } else {
                                     Console.WriteLine("ANOMALY! evse not found");
                                 }

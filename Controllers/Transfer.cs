@@ -6,13 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Transfer {
-    public static async void exec (Session session, string from, string to, long value) {
+    public static async void exec (Session session, string from, string to, long value, int counter) {
         var header = await Env.Tezos.Blocks.Head.Hash.GetAsync<string>();
-        var counter = await Env.Tezos.Blocks.Head.Context.Contracts[Env.PrivateKey.PubKey.Address].Counter.GetAsync<int>();
         var content = new ManagerOperationContent[] {
             new TransactionContent {
                Source = Env.PrivateKey.PubKey.Address,
-               Counter = ++counter,
+               Counter = counter,
                Amount = 0,
                Destination = Env.Token,
                GasLimit = Env.GasLimit,

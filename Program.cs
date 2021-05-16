@@ -17,6 +17,8 @@ namespace WebAPITest
         {
              // Start now indexer background thread
             ThreadPool.QueueUserWorkItem(Indexer.ProcessIndex);
+            // Start manager Account background thread
+            ThreadPool.QueueUserWorkItem(ManagerAccount.Run);
             CreateHostBuilder(args).Build().Run();
         }
 
